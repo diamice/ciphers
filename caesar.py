@@ -12,7 +12,7 @@ class Caesar:
 
     @staticmethod
     def _get_alphabet_consts(text: str) -> Tuple[int, int, int]:
-        if len(set(text.lower()).intersection(set(ascii_lowercase))) > 1:
+        if set(text.lower()).intersection(set(ascii_lowercase)):
             return Caesar.ENGLISH_ABC, ord('A'), ord('a')
         return Caesar.RU_ABC, ord('А'), ord('а')
 
