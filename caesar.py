@@ -4,7 +4,7 @@ from typing import Tuple
 
 class Caesar:
     ENGLISH_ABC = 26
-    RU_ABC = 33
+    RU_ABC = 32
 
     def __init__(self, text: str, shift: int):
         self.text = text
