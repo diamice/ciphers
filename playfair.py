@@ -16,7 +16,7 @@ class Playfair:
 
     def create_matrix(self, key: str):
         """Создание матрицы"""
-        alphabet = 'ABCDEFGHIKLMNOPQRSTUVWXYZ'  # Используем оригинальный алфавит без 'J'
+        alphabet = 'ABCDEFGHIKLMNOPQRSTUVWXYZ'
         unique_matrix = set(key)
         matrix = key
         for letter in alphabet:
@@ -106,14 +106,18 @@ class Playfair:
         return "".join(cleaned_text)
 
 
-# Пример использования
-key = "HOLLYWOOD"
-playfair_cipher = Playfair(key)
+def main():
+    key = input("Введите ключ для шифрования: ").strip()
+    text = input("Введите текст для шифрования: ").strip()
 
-text = "HELLOOOZ"
+    playfair_cipher = Playfair(key)
 
-encoded_text = playfair_cipher.encode(text)
-print("Зашифрованный текст:", encoded_text)
+    encoded_text = playfair_cipher.encode(text)
+    print("Зашифрованный текст:", encoded_text)
 
-decoded_text = playfair_cipher.decode(encoded_text)
-print("Расшифрованный текст:", decoded_text)
+    decoded_text = playfair_cipher.decode(encoded_text)
+    print("Расшифрованный текст:", decoded_text)
+
+
+if __name__ == "__main__":
+    main()
