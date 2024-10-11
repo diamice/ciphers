@@ -1,6 +1,3 @@
-from string import ascii_uppercase
-
-
 class Playfair:
     def __init__(self, key: str):
         self.key = self.make_key(key)
@@ -19,7 +16,7 @@ class Playfair:
 
     def create_matrix(self, key: str):
         """Создание матрицы"""
-        alphabet = ascii_uppercase.replace('J', '')
+        alphabet = 'ABCDEFGHIKLMNOPQRSTUVWXYZ'  # Используем оригинальный алфавит без 'J'
         unique_matrix = set(key)
         matrix = key
         for letter in alphabet:
@@ -49,10 +46,24 @@ class Playfair:
         else:
             return self.matrix[row_a][col_b] + self.matrix[row_b][col_a]
 
+    def decode_pair(self, a, b):
+        """Декодировка биграмм"""
+        row_a, col_a = self.find_position(a)
+        row_b, col_b = self.find_position(b)
+
+        if row_a is None or row_b is None:
+            raise ValueError(f"Символы '{a}' или '{b}' не найдены в матрице")
+
+        if row_a == row_b:
+            return self.matrix[row_a][(col_a - 1) % 5] + self.matrix[row_b][(col_b - 1) % 5]
+        elif col_a == col_b:
+            return self.matrix[(row_a - 1) % 5][col_a] + self.matrix[(row_b - 1) % 5][col_b]
+        else:
+            return self.matrix[row_a][col_b] + self.matrix[row_b][col_a]
+
     def encode(self, text):
         text = text.upper().replace('J', 'I')
         cleaned_text = []
-
         for char in text:
             if char.isalpha():
                 cleaned_text.append(char)
@@ -72,16 +83,37 @@ class Playfair:
 
         return "".join(cleaned_text)
 
+    def decode(self, text):
+        text = text.upper().replace('J', 'I')
+        cleaned_text = []
+        for char in text:
+            if char.isalpha():
+                cleaned_text.append(char)
 
+        i = 0
+        while i < len(cleaned_text):
+            a = cleaned_text[i]
+            b = cleaned_text[i + 1] if i + 1 < len(cleaned_text) else 'X'
+
+            if a == b:
+                cleaned_text.insert(i + 1, 'X')
+                b = 'X'
+
+            pairs = self.decode_pair(a, b)
+            cleaned_text[i:i + 2] = pairs
+            i += 2
+
+        return "".join(cleaned_text)
+
+
+# Пример использования
 key = "HOLLYWOOD"
-
 playfair_cipher = Playfair(key)
-cleaned_key = playfair_cipher.make_key(key)
-our_matrix = playfair_cipher.create_matrix(cleaned_key)
-
 
 text = "HELLOOOZ"
 
 encoded_text = playfair_cipher.encode(text)
-
 print("Зашифрованный текст:", encoded_text)
+
+decoded_text = playfair_cipher.decode(encoded_text)
+print("Расшифрованный текст:", decoded_text)

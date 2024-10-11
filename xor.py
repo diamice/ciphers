@@ -1,7 +1,7 @@
 from itertools import cycle
 
 
-def xor_bytes_cipher(text: bytes, key: str) -> bytes:
+def xor_cipher(text: bytes, key: str) -> bytes:
     key = key.encode('utf8')
     return bytes([a ^ b for a, b in zip(text, cycle(key))])
 
