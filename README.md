@@ -119,6 +119,11 @@ python rsa.py
 ## Все шифры в одном приложении
 **Файл:** `pyqt_app`
 
+Установка зависимостей:
+```python
+pip install -r requirements.txt
+```
+
 ### Пример использования
 ```python
 python pyqt_app.py
