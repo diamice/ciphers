@@ -107,8 +107,8 @@ class Playfair:
 
 
 def main():
-    key = input("Введите ключ для шифрования: ").strip()
     text = input("Введите текст для шифрования: ").strip()
+    key = input("Введите ключ для шифрования: ").strip()
 
     playfair_cipher = Playfair(key)
 
