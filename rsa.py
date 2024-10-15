@@ -1,57 +1,77 @@
 import random
+import math
 
 
-def sieve_of_eratosthenes(limit):
-    primes = [True] * (limit + 1)
-    p = 2
-    while p * p <= limit:
-        if primes[p]:
-            for i in range(p * p, limit + 1, p):
-                primes[i] = False
-        p += 1
-    return [p for p in range(2, limit + 1) if primes[p]]
+class RSA:
+    def __init__(self, p, q):
+        if not self.is_prime(p):
+            raise ValueError(f"{p} не является простым числом!")
+        if not self.is_prime(q):
+            raise ValueError(f"{q} не является простым числом!")
+        if p == q:
+            raise ValueError("p и q не должны быть равны!")
+
+        self.p = p
+        self.q = q
+        self.n = self.p * self.q
+        self.phi_n = (self.p - 1) * (self.q - 1)
+
+        self.e = self.generate_e(self.phi_n)
+        self.d = self.mod_inverse(self.e, self.phi_n)
+
+    @staticmethod
+    def is_prime(number):
+        """Проверка, является ли число простым"""
+        if number < 2:
+            return False
+        for i in range(2, int(math.sqrt(number)) + 1):
+            if number % i == 0:
+                return False
+        return True
+
+    @staticmethod
+    def mod_inverse(e, phi):
+        """Вычисление модульного обратного"""
+        for d in range(3, phi):
+            if (d * e) % phi == 1:
+                return d
+        raise ValueError("Mod_inverse does not exist!")
+
+    @staticmethod
+    def generate_e(phi):
+        """Генерация e"""
+        e = random.randint(3, phi - 1)
+        while math.gcd(e, phi) != 1:
+            e = random.randint(3, phi - 1)
+        return e
+
+    def encode(self, message):
+        """Шифрование сообщения"""
+        message_encoded = [ord(ch) for ch in message]
+        ciphertext = [pow(ch, self.e, self.n) for ch in message_encoded]
+        return ciphertext
+
+    def decode(self, ciphertext):
+        """Дешифрование сообщения"""
+        decoded_msg = [pow(ch, self.d, self.n) for ch in ciphertext]
+        msg = "".join(chr(ch) for ch in decoded_msg)
+        return msg
 
 
-def gcd(a, b):
-    while b != 0:
-        a, b = b, a % b
-    return a
+if __name__ == "__main__":
+    p = int(input("Введите простое число p: "))
+    q = int(input("Введите простое число q, отличное от p: "))
 
 
-def generate_rsa_keys():
-    primes = sieve_of_eratosthenes(1000)
-    p = random.choice(primes)
-    q = random.choice(primes)
-    while q == p:
-        q = random.choice(primes)
+    try:
+        rsa = RSA(p, q)
 
-    n = p * q
-    phi = (p - 1) * (q - 1)
+        message = input("Введите сообщение для шифрования: ")
+        ciphertext = rsa.encode(message)
+        print(f"{message} зашифровано в: {ciphertext}")
 
-    e = random.choice([x for x in range(2, phi) if gcd(x, phi) == 1])
+        decoded_message = rsa.decode(ciphertext)
+        print("Расшифрованное сообщение:", decoded_message)
 
-    d = pow(e, -1, phi)
-
-    return (e, n), (d, n)
-
-
-def encrypt(plaintext, public_key):
-    e, n = public_key
-    ciphertext = [pow(ord(char), e, n) for char in plaintext]
-    return ciphertext
-
-
-def decrypt(ciphertext, private_key):
-    d, n = private_key
-    plaintext = ''.join([chr(pow(char, d, n)) for char in ciphertext])
-    return plaintext
-
-
-public_key, private_key = generate_rsa_keys()
-
-message = "HELLO"
-ciphertext = encrypt(message, public_key)
-print("Зашифрованное сообщение:", ciphertext)
-
-decrypted_message = decrypt(ciphertext, private_key)
-print("Расшифрованное сообщение:", decrypted_message)
+    except ValueError as e:
+        print(e)
