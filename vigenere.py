@@ -53,11 +53,10 @@ class Vigenere:
 
 
 if __name__ == '__main__':
+    text = input("Введите текст для шифрования: ")
     key = input("Введите ключ: ")
     vigenere_cipher = Vigenere(key)
-    while True:
-        text = input("Введите текст для шифрования: ")
-        encoded_text = vigenere_cipher.encode(text)
-        print(f"Зашифрованный текст: {encoded_text}")
-        decoded_text = vigenere_cipher.decode(encoded_text)
-        print(f"Расшифрованный текст: {decoded_text}", end='\n\n')
+    encoded_text = vigenere_cipher.encode(text)
+    print(f"Зашифрованный текст: {encoded_text}")
+    decoded_text = vigenere_cipher.decode(encoded_text)
+    print(f"Расшифрованный текст: {decoded_text}", end='\n\n')
